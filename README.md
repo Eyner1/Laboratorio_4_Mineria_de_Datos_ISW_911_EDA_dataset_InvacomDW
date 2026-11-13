@@ -7,6 +7,7 @@ Integrantes:
 - Eyner Lopez Aleman
 - Neysa Alfaro
 - Osvaldo Zúñiga Pérez
+- José Alejandro Lopez Quesada
 
 ## Archivos de entrega
 
