@@ -8,6 +8,8 @@ WITH ventas AS (
         f.HogarKey,
         SUM(f.SALES_VALUE)                         AS total_sales,
         COUNT(DISTINCT f.BASKET_ID)                AS num_baskets,
+        -- Cantidad de origen: mezcla unidades. Se diagnostica en el EDA y
+        -- se excluye del dataset limpio; no representa un conteo de articulos.
         SUM(f.QUANTITY)                            AS total_quantity,
         COUNT(DISTINCT f.ProductoKey)              AS distinct_products,
         COUNT(DISTINCT f.TiendaKey)                AS distinct_stores,
@@ -25,7 +27,10 @@ depto AS (
     SELECT HogarKey, DEPARTMENT AS top_department
     FROM (
         SELECT f.HogarKey, d.DEPARTMENT,
-               ROW_NUMBER() OVER (PARTITION BY f.HogarKey ORDER BY SUM(f.SALES_VALUE) DESC) AS rn
+               ROW_NUMBER() OVER (
+                   PARTITION BY f.HogarKey
+                   ORDER BY SUM(f.SALES_VALUE) DESC, d.DEPARTMENT
+               ) AS rn
         FROM dbo.FactVenta f
         JOIN dbo.DimProducto d ON d.ProductoKey = f.ProductoKey
         GROUP BY f.HogarKey, d.DEPARTMENT
@@ -64,4 +69,7 @@ FROM dbo.DimHogar h
 LEFT JOIN ventas  v  ON v.HogarKey  = h.HogarKey
 LEFT JOIN depto   dp ON dp.HogarKey = h.HogarKey
 LEFT JOIN cupones c  ON c.household_key = h.household_key
-ORDER BY h.household_key;
+ORDER BY h.household_key
+-- Limita la memoria de esta consulta en la instancia local de SQL Server.
+-- Los agregados y los datos resultantes no cambian.
+OPTION (MAXDOP 1, MAX_GRANT_PERCENT = 1);
