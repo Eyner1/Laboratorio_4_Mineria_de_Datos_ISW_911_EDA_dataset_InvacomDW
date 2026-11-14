@@ -66,5 +66,6 @@ es **2.500 filas, 31 columnas y ningún nulo**. El punto 13 se desarrolla como
 identificación del objetivo y justificación del modelo candidato; no se atribuyen
 métricas a modelos que no se han evaluado.
 
-La entrega en el campus virtual debe incluir el notebook con el nombre exacto
-`lab4_IC2025.ipynb` y el archivo `data_process.csv`.
+La entrega en el campus virtual es el notebook con el nombre exacto
+`lab4_IC2025.ipynb` (punto 16 del enunciado). `data_process.csv` lo genera el propio
+notebook y queda publicado en este repositorio.
