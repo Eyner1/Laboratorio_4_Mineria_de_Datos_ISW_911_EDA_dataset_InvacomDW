@@ -1,0 +1,5 @@
+# El laboratorio utiliza Python dentro de un notebook.
+*.ipynb linguist-language=Python linguist-detectable=true
+
+# Los scripts de extraccion son herramientas auxiliares del DW.
+*.ps1 linguist-detectable=false
