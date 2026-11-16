@@ -1,7 +1,5 @@
 # Laboratorio 4: análisis exploratorio de hogares
 
-Curso Minería de Datos, ISW-911, Universidad Técnica Nacional.
-
 Integrantes:
 
 - Eyner Lopez Aleman
