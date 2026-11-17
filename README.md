@@ -1,5 +1,8 @@
 # Laboratorio 4: análisis exploratorio de hogares
 
+Este laboratorio analiza las compras de 2.500 hogares. El notebook contiene la
+exploración de los datos, los gráficos y las decisiones de limpieza.
+
 Integrantes:
 
 - Eyner Lopez Aleman
@@ -7,44 +10,44 @@ Integrantes:
 - Osvaldo Zúñiga Pérez
 - José Alejandro Lopez Quesada
 
-## Archivos de entrega
+## Archivos
 
-- `lab4_IC2025.ipynb`: notebook con el desarrollo, las justificaciones y la evidencia gráfica.
-- `data_process.csv`: resultado del EDA, generado al ejecutar el notebook.
-- `data/hogares_invacom.csv`: extracción original de un registro por hogar.
-- `sql/dataset_hogares.sql`: consulta de extracción de solo lectura.
-- `sql/exportar_csv.ps1`: conexión, exportación y comparación del CSV con el DW.
+- `lab4_IC2025.ipynb`: desarrollo del laboratorio.
+- `data_process.csv`: datos procesados que genera el notebook.
+- `data/hogares_invacom.csv`: datos originales, con una fila por hogar.
+- `sql/dataset_hogares.sql`: consulta para obtener los datos del DW.
+- `sql/exportar_csv.ps1`: script para exportar el CSV o compararlo con el DW.
 
-El enunciado pide datos abiertos de Costa Rica. Este trabajo utiliza `InvacomDW`,
-con la autorización docente indicada en la documentación del notebook; esa excepción
-es necesaria para que el origen de los datos cumpla lo solicitado.
+## Datos del proyecto
 
-## Conexión con el proyecto
+Los datos vienen de `InvacomDW`, el DW del proyecto. El notebook indica que el
+profesor autorizó esta fuente en lugar de los datos abiertos de Costa Rica que
+pide el enunciado.
 
-El DW es **InvacomDW**, en **127.0.0.1:1433**. En SqlClient se escribe
-`tcp:127.0.0.1,1433`. El script usa autenticación de Windows y admite el certificado
-autofirmado del servidor local, sin guardar contraseñas.
+La consulta reúne información de `DimHogar`, `FactVenta`, `DimPeriodo`,
+`DimProducto` y `coupon_redempt`. Primero se exporta el CSV desde el DW y se sube
+al repositorio; después, el notebook lo lee desde GitHub.
 
-Desde PowerShell, en la raíz del repositorio:
+El servidor está en `127.0.0.1:1433`. El script se conecta a `InvacomDW` con
+autenticación de Windows y usa la dirección `tcp:127.0.0.1,1433`.
+Para comprobar que el CSV coincide con el DW, sin sobrescribirlo, se ejecuta desde
+la raíz del repositorio:
 
 ```powershell
-# Comprobar la conexión y que el CSV coincide con el DW, sin sobrescribirlo.
 .\sql\exportar_csv.ps1 -SoloValidar
+```
 
-# Exportar de nuevo si se actualizó el DW.
+Si cambiaron los datos del DW, se puede exportar el archivo de nuevo:
+
+```powershell
 .\sql\exportar_csv.ps1
 ```
 
-La consulta utiliza `DimHogar`, `FactVenta`, `DimPeriodo`, `DimProducto` y
-`coupon_redempt`. El notebook **lee el CSV publicado en GitHub**, como exige el
-enunciado; la conexión al DW corresponde al paso previo de extracción. Tras cambiar
-el CSV original hay que publicarlo en GitHub antes de ejecutar el notebook.
+El CSV actualizado debe subirse a GitHub antes de volver a ejecutar el notebook.
 
-## Ejecutar el laboratorio
+## Cómo ejecutar el notebook
 
-Se verificó con Python 3.14.3. Las versiones utilizadas están en `requirements.txt`.
-Es necesario acceder a Internet para la lectura desde GitHub; ejecutar el notebook
-no requiere conectarse a SQL Server.
+Se utilizó Python 3.14.3. Para preparar el entorno y ejecutar el análisis:
 
 ```powershell
 py -3.14 -m venv .venv
@@ -53,17 +56,20 @@ py -3.14 -m venv .venv
 jupyter nbconvert --to notebook --execute --inplace lab4_IC2025.ipynb --ExecutePreprocessor.timeout=180
 ```
 
-También se puede abrir el notebook en el editor y seleccionar el intérprete de
-`.venv`, reiniciar el kernel y ejecutar todas las celdas en orden. La última sección
-sobrescribe `data_process.csv` con el resultado de esa ejecución.
+También se puede abrir el notebook en el editor, seleccionar el intérprete de
+`.venv`, reiniciar el kernel y ejecutar todas las celdas en orden. Hace falta
+conexión a Internet para leer el CSV de GitHub; no es necesario tener SQL Server
+conectado para este paso. Las dependencias están en `requirements.txt`.
 
-La cantidad original `total_quantity` combina unidades de distintos departamentos.
-Se conserva en el CSV de origen para documentar el hallazgo y se excluye del
-dataset limpio: acotar percentiles no homogeneiza unidades. El resultado esperado
-es **2.500 filas, 31 columnas y ningún nulo**. El punto 13 se desarrolla como
-identificación del objetivo y justificación del modelo candidato; no se atribuyen
-métricas a modelos que no se han evaluado.
+## Resultado y entrega
 
-La entrega en el campus virtual es el notebook con el nombre exacto
-`lab4_IC2025.ipynb` (punto 16 del enunciado). `data_process.csv` lo genera el propio
-notebook y queda publicado en este repositorio.
+La última sección guarda `data_process.csv` con **2.500 filas, 31 columnas y ningún
+nulo**. El archivo se sobrescribe cada vez que se ejecuta esa sección.
+
+Se excluye `total_quantity` del conjunto procesado porque suma cantidades de
+departamentos que usan unidades distintas. Recortar los valores altos no corrige
+esa diferencia. La columna se conserva en el CSV original para revisar el problema.
+El notebook también justifica un modelo candidato, sin entrenarlo.
+
+En el campus se entrega únicamente `lab4_IC2025.ipynb`, con ese nombre.
+`data_process.csv` queda publicado en este repositorio.
